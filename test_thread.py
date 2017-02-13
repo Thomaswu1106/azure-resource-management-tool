@@ -1,4 +1,5 @@
-import queue, time, threading, datetime 
+import time, threading, datetime
+from multiprocessing import queue
 
 st = datetime.datetime.now()  
 while que.qsize() > 0:  
