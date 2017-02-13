@@ -19,7 +19,7 @@ class consumer(threading.Thread):
             self.queue.task_done()  
         return  
 que = Queue.Queue()  
-for x in range(10):  
+for x in range(5):  
     que.put(random.random() * 10, True, None)  
 consumers = [consumer(que) for i in range(10)]
 
