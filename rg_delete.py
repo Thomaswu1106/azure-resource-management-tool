@@ -57,6 +57,11 @@ def run_example():
         que.put(items.name)
 
     consumers = [consumer(que) for i in que.qsize()]
+
+    for a in consumers:
+        c.start()
+    que.join()
+
 '''
     # List Resource Groups
     print('List RGs : ')
@@ -66,5 +71,6 @@ def run_example():
         client.resource_groups.delete(format(item.name)).wait()
         print(int(time.time()) - st)
 '''
+
 if __name__ == "__main__":
     run_example()
