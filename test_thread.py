@@ -1,10 +1,25 @@
-import time, threading, datetime
-from multiprocessing import queue
+import Queue,threading,time,random
 
-st = datetime.datetime.now()  
-while que.qsize() > 0:  
-        job = que.get()  
-        job.do()  
+class consumer(threading.Thread):  
+    def __init__(self,que):  
+        threading.Thread.__init__(self)  
+        self.daemon = False  
+        self.queue = que  
+    def run(self):  
+        while True:  
+            if self.queue.empty():  
+                break  
+            item = self.queue.get()  
+            #processing the item  
+            time.sleep(item)  
+            print self.name,item  
+            self.queue.task_done()  
+        return  
+que = Queue.Queue()  
+for x in range(10):  
+    que.put(random.random() * 10, True, None)  
+consumers = [consumer(que) for x in range(3)]  
   
-td = datetime.datetime.now() - st  
-print("\t[Info] Spending time={0}!".format(td))  
+for c in consumers:  
+    c.start()  
+que.join()  
