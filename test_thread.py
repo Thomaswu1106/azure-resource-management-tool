@@ -15,14 +15,16 @@ class consumer(threading.Thread):
             item = self.queue.get()  
             #processing the item  
             time.sleep(item)  
-            print self.name,item  
+            print ('Thread name %s sleep %.5f second' % (self.name, item))
             self.queue.task_done()  
         return  
 que = Queue.Queue()  
 for x in range(10):  
     que.put(random.random() * 10, True, None)  
-consumers = [consumer(que) for x in range(3)]  
-  
+consumers = [consumer(que) for i in range(10)]
+
+print 'Queue numbers is %s' % que.qsize()
+
 for c in consumers:  
     c.start()  
 que.join()  
