@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import Queue
 import threading
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
@@ -16,6 +17,27 @@ from azure.mgmt.resource import ResourceManagementClient
 # AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
 # AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
 #
+
+class consumer(threading.Thread):  
+    def __init__(self,que):  
+        threading.Thread.__init__(self)  
+        self.daemon = False  
+        self.queue = que  
+    def run(self):  
+        while True:  
+            if self.queue.empty():  
+                break  
+            item = self.queue.get()
+            print('Start to delete RG : ' + format(item.name) + '\t')
+            st = int(time.time())
+            client.resource_groups.delete(format(item.name)).wait()
+            print(int(time.time()) - st)
+            #processing the item
+            #time.sleep(item)
+            #print self.name,item  
+            self.queue.task_done()  
+        return  
+
 def run_example():
     """Resource Group management example."""
     #
@@ -30,21 +52,19 @@ def run_example():
     )
     client = ResourceManagementClient(credentials, subscription_id)
 
-    # List Resource Groups
+    que = Queue.Queue()
+    for items in client.resource_groups.list():
+        que.put(items.name)
 
+    consumers = [consumer(que) for i in que.qsize()]
+'''
+    # List Resource Groups
     print('List RGs : ')
     for item in client.resource_groups.list():
         print('Start to delete RG : ' + format(item.name) + '\t')
-        #delete_async_operation = client.resource_groups.delete(format(item.name))
         st = int(time.time())
         client.resource_groups.delete(format(item.name)).wait()
         print(int(time.time()) - st)
-
-    def delete():
-    """ Resource delete function """
-        print("Test threading at time %s", time.ctime(time.time()))
-        return
-
-
+'''
 if __name__ == "__main__":
     run_example()

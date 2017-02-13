@@ -1,4 +1,7 @@
-import Queue,threading,time,random
+import time
+import random
+import Queue
+import threading
 
 class consumer(threading.Thread):  
     def __init__(self,que):  
