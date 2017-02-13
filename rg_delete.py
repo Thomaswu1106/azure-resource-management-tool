@@ -37,7 +37,7 @@ def run_example():
         print('Start to delete RG : ' + format(item.name) + '\t')
         #delete_async_operation = client.resource_groups.delete(format(item.name))
         st = int(time.time())
-        client.resource_groups.delete(format(item.name))
+        client.resource_groups.delete(format(item.name)).wait()
         print(int(time.time()) - st)
 
     def delete():
