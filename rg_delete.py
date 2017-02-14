@@ -22,6 +22,7 @@ credentials = ServicePrincipalCredentials(
     )
 
 client = ResourceManagementClient(credentials, subscription_id)
+rg_share_name = 'epas-rg-shared'
 
 class consumer(threading.Thread):  
     def __init__(self,que):  
@@ -42,14 +43,17 @@ class consumer(threading.Thread):
 
 def run_queue():
     que = Queue.Queue()
+
     for items in client.resource_groups.list():
-        que.put(format(items.name))
+        if items.name not in rg_share_name:
+            que.put(format(items.name))
 
     consumers = [consumer(que) for i in range(0,que.qsize())]
 
     for c in consumers:
         c.start()
     que.join()
+    return
 
 if __name__ == "__main__":
     run_queue()
