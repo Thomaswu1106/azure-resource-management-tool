@@ -37,12 +37,12 @@ class consumer(threading.Thread):
             if self.queue.empty():  
                 break  
             rg_name = self.queue.get()
-            for vm_name in compute_client.virtual_machines.list(rg_name):
+            for vm in compute_client.virtual_machines.list(rg_name):
                 st = int(time.time())
-                async_vm_deallocate = compute_client.virtual_machines.deallocate( rg_name , vm_name)
+                async_vm_deallocate = compute_client.virtual_machines.deallocate( rg_name , vm.name)
                 async_vm_deallocate.wait()
-                et = int(time.time()) - st # delete execution time
-                print("Deallocate VM %s in RG %s spend %d seconds\t" % (format(vm_name), rg_name, et))
+                et = int(time.time()) - st # deallocate execution time
+                print("Deallocate VM %s in RG %s spend %d seconds\t" % (format(vm.name), rg_name, et))
             self.queue.task_done()  
         return  
 
@@ -50,7 +50,7 @@ def run_queue():
     que = Queue.Queue()
 
     for rg_list in client.resource_groups.list():
-        if rg_list.name not in rg_share_name or reserved_rg:
+        if rg_list.name not in [rg_share_name, reserved_rg]:
             que.put(format(rg_list.name))
 
     consumers = [consumer(que) for i in range(0,que.qsize())]
