@@ -7,13 +7,8 @@ import threading
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
 
-# AZURE_TENANT_ID: with your Azure Active Directory tenant id or domain
-# AZURE_CLIENT_ID: with your Azure Active Directory Application Client ID
-# AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
-# AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
-#
-# Create the Resource Manager Client with an Application (service principal) token provider
-#
+
+# get the application credential
 subscription_id = os.environ.get('AZURE_SUBSCRIPTION_ID') # your Azure Subscription Id
 credentials = ServicePrincipalCredentials(
     client_id=os.environ['AZURE_CLIENT_ID'],
@@ -22,7 +17,8 @@ credentials = ServicePrincipalCredentials(
     )
 
 client = ResourceManagementClient(credentials, subscription_id)
-rg_share_name = 'epas-rg-shared'
+rg_share_name = ''
+#rg_share_name = 'epas-rg-shared'
 
 class consumer(threading.Thread):  
     def __init__(self,que):  
@@ -44,7 +40,7 @@ class consumer(threading.Thread):
 def run_queue():
     que = Queue.Queue()
 
-    for items in client.resource_groups.list():
+    for items in sorted(client.resource_groups.list()):
         if items.name not in rg_share_name:
             que.put(format(items.name))
 

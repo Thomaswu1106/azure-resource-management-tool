@@ -25,7 +25,7 @@ credentials = ServicePrincipalCredentials(
 client = ResourceManagementClient(credentials, subscription_id)
 compute_client = ComputeManagementClient(credentials, subscription_id)
 rg_share_name = 'epas-rg-shared'
-reserved_rg = 'epas-rg-devqa2-1'
+reserved_rg = ''
 
 class consumer(threading.Thread):  
     def __init__(self,que):  

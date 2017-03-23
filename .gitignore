@@ -1,1 +1,4 @@
 __pycache__
+credential.conf
+.credential.conf
+copy_blob.py
